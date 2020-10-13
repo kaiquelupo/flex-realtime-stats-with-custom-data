@@ -3,7 +3,7 @@
 This plugin allows you to filter which realtime stats the current Flex user is going to see with the Queue Stats View. It is common to use this schema with BPO permissioning and channel separation. 
 
 <p align="center">
-    <img src="screenshots/screenshot.png?raw=true" width="800" >
+    <img src="screenshots/screenshot.png?raw=true" width="auto" >
 </p>
 
 ## How it works
