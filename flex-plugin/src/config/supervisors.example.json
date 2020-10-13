@@ -1,0 +1,13 @@
+{ 
+    "supervisors": [
+        {
+            "email": "email@email.com",
+            "queues": ["Everyone", "blue"],
+            "full_access": true
+        },
+        {
+            "email": "email2@email.com",
+            "queues": ["Everyone"]
+        }
+    ]
+}
