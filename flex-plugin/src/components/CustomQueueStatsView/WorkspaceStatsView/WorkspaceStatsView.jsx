@@ -9,16 +9,16 @@ import { get } from 'lodash';
 import { Wrapper } from './WorkspaceStatsView.Styles';
 import { numbersPerChannel, showNumbersPerChannel, channels, getEmoji, getBPO } from '../../../helpers';
 
-const WorkspaceStatsView = ({ stats, manager }) => {
+const WorkspaceStatsView = ({ statsTasks, statsWorkers, manager }) => {
 
   let active = {};
   let waiting = {};
 
   const bpo = getBPO(manager);
   
-  Object.keys(stats).forEach((queue) => {
+  Object.keys(statsTasks).forEach((queue) => {
 
-    numbersPerChannel(bpo, active, waiting, stats[queue], true);
+    numbersPerChannel(bpo, active, waiting, statsTasks[queue], true);
 
   });
 
@@ -41,13 +41,13 @@ const WorkspaceStatsView = ({ stats, manager }) => {
       <Grid item xs={4}>
         <AgentByActivityChart
           availableAgents={
-            get(stats, `general.${bpo}.workers.available.total`, 0)
+            get(statsWorkers, `general.${bpo}.workers.available.total`, 0)
           }
           offlineAgents={
-            get(stats, `general.${bpo}.workers.offline.total`, 0)
+            get(statsWorkers, `general.${bpo}.workers.offline.total`, 0)
           }
           unavailableAgents={
-            get(stats, `general.${bpo}.workers.unavailable.total`, 0)
+            get(statsWorkers, `general.${bpo}.workers.unavailable.total`, 0)
           }
           bottom={
             <div style={{ paddingTop: '5px', borderTop: "1px solid #CCC", marginTop: "15px"}}>
@@ -58,13 +58,13 @@ const WorkspaceStatsView = ({ stats, manager }) => {
                   </div>
                   <AgentByActivityChart
                     availableAgents={
-                      get(stats, `general.${bpo}.workers.available.${channel}`, 0)
+                      get(statsWorkers, `general.${bpo}.workers.available.${channel}`, 0)
                     }
                     offlineAgents={
-                      get(stats, `general.${bpo}.workers.offline.${channel}`, 0)
+                      get(statsWorkers, `general.${bpo}.workers.offline.${channel}`, 0)
                     }
                     unavailableAgents={
-                      get(stats, `general.${bpo}.workers.unavailable.${channel}`, 0)
+                      get(statsWorkers, `general.${bpo}.workers.unavailable.${channel}`, 0)
                     }
                   />
 

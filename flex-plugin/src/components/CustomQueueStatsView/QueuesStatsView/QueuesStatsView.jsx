@@ -23,7 +23,6 @@ class QueueStatsView extends React.Component {
 
     this.state = {
       queuesList: [],
-      workersByQueue: [],
       fullAccess: false
     };
 
@@ -68,14 +67,16 @@ class QueueStatsView extends React.Component {
         <TableBody>
           {this.state.queuesList.map(queue => {
 
-            const queueStats = this.props.stats[queue];
+            const queueStatsTasks = this.props.statsTasks[queue];
+            const queueStatsWorkers = this.props.statsWorkers[queue];
+
 
             let active = {};
             let waiting = {};
 
-            const isSyncLoaded = Object.keys(this.props.stats).length > 0;
+            const isTaskSyncLoaded = Object.keys(this.props.statsTasks).length > 0;
 
-            numbersPerChannel(bpo, active, waiting, queueStats, isSyncLoaded);
+            numbersPerChannel(bpo, active, waiting, queueStatsTasks, isTaskSyncLoaded);
 
             return (
               <QueueTableRow key={queue}>
@@ -96,13 +97,13 @@ class QueueStatsView extends React.Component {
                     <div style={{ margin: '2px 0 2px 0' }}>
                         <QueueAgents
                         availableAgents={
-                          get(queueStats, `${bpo}.workers.available.${channel}`, 0) 
+                          get(queueStatsWorkers, `${bpo}.workers.available.${channel}`, 0) 
                         }
                         unavailableAgents={
-                          get(queueStats, `${bpo}.workers.unavailable.${channel}`, 0) 
+                          get(queueStatsWorkers, `${bpo}.workers.unavailable.${channel}`, 0) 
                         }
                         offlineAgents={
-                          get(queueStats, `${bpo}.workers.offline.${channel}`, 0) 
+                          get(queueStatsWorkers, `${bpo}.workers.offline.${channel}`, 0) 
                         }
                       />
                     </div>

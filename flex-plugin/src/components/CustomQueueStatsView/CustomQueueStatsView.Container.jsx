@@ -13,7 +13,8 @@ class CustomQueueStatsViewContainer extends React.Component {
     super(props);
 
     this.state = {
-      stats: {}
+      statsTasks: {},
+      statsWorkers: {}
     };
 
   }
@@ -22,22 +23,26 @@ class CustomQueueStatsViewContainer extends React.Component {
     
     var syncClient = new SyncClient(this.props.manager.user.token);
 
-    this._document = syncClient.document("realtime-stats-bpo");
-
-    this._document.then(function(doc) {
+    syncClient.document("realtime-stats-bpo").then(function(doc) {
 
       doc.on("updated",function(data) {
 
-        this.setState({ stats: data.value });
+        this.setState({ statsTasks: data.value });
 
       }.bind(this));
 
     }.bind(this));
 
-  }
+    syncClient.document("realtime-stats-bpo-workers").then(function(doc) {
 
-  componentWillUnmount() {
-    this._document.close();
+      doc.on("updated",function(data) {
+
+        this.setState({ statsWorkers: data.value });
+
+      }.bind(this));
+
+    }.bind(this));
+
   }
 
   render() {
@@ -57,10 +62,10 @@ class CustomQueueStatsViewContainer extends React.Component {
           Company: <span style={{ fontWeight: "bold" }}>{names[bpo] || bpo}</span>
         </div>
         <div>
-          <WorkspaceStatsView {...this.props} stats={this.state.stats}/>
+          <WorkspaceStatsView {...this.props} statsTasks={this.state.statsTasks} statsWorkers={this.state.statsWorkers}/>
         </div>
         <div style={{ marginTop: 48 }}>
-          <QueueStatsView {...this.props} stats={this.state.stats} />
+          <QueueStatsView {...this.props} statsTasks={this.state.statsTasks} statsWorkers={this.state.statsWorkers}/>
         </div>
       </>
     );

@@ -1,46 +1,38 @@
-const { ACCOUNT_SID, AUTH_TOKEN, WORKSPACE_SID, SERVICE_SID, DOCUMENT_SID } = process.env;
+const { ACCOUNT_SID, AUTH_TOKEN, WORKSPACE_SID, SERVICE_SID, TASKS_DOCUMENT_SID, WORKERS_DOCUMENT_SID } = process.env;
 
 const client = require("twilio")(ACCOUNT_SID, AUTH_TOKEN);
-const { aggregate } = require("./helpers/aggregation");
+const { countTasksPerBPOandChannel, countWorkersPerBPOandChannel } = require("./helpers/aggregation");
+const { pool } = require("./helpers/pooling");
 const { get } = require("./helpers/fetch");
 
 
 (async () => {
 
-    let isWorking = false;
+    pool(async () => {
 
-    setInterval(async () => {
+        const tasks = await get(`https://taskrouter.twilio.com/v1/Workspaces/${WORKSPACE_SID}/Tasks`, "tasks", {
+            PageSize: 500
+        });
+        
+        const data = countTasksPerBPOandChannel(tasks);
 
-        if(!isWorking) {
+        await client.sync.services(SERVICE_SID)
+            .documents(TASKS_DOCUMENT_SID)
+            .update({ data })
 
-            try {
+    }, 5000);
 
-                isWorking = true;
+    pool(async () => {
 
-                const tasks = await get(`https://taskrouter.twilio.com/v1/Workspaces/${WORKSPACE_SID}/Tasks`, "tasks", {
-                    PageSize: 1000
-                });
+        const tasks = await get(`https://taskrouter.twilio.com/v1/Workspaces/${WORKSPACE_SID}/Workers`, "workers", {
+            PageSize: 500
+        });
+        
+        const data = countWorkersPerBPOandChannel(tasks);
 
-                const workers = await get(`https://taskrouter.twilio.com/v1/Workspaces/${WORKSPACE_SID}/Workers`, "workers", {
-                    PageSize: 1000
-                });
-
-                const data = aggregate(tasks, workers);
-
-                await client.sync.services(SERVICE_SID)
-                    .documents(DOCUMENT_SID)
-                    .update({ data })
-
-            } catch(err) {
-
-                console.log(err);
-
-            } finally {
-
-                isWorking = false;
-
-            }
-        }
+        await client.sync.services(SERVICE_SID)
+            .documents(WORKERS_DOCUMENT_SID)
+            .update({ data })
 
     }, 5000);
 

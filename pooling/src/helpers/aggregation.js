@@ -1,16 +1,8 @@
 const { increaseValueByPath } = require("./utils");
 
-const aggregate = (tasks, workers) => {
-    
+const countTasksPerBPOandChannel = (tasks) => {
+
     const queues = {};
-
-    countTasksPerBPOandChannel(tasks, queues);
-    countWorkersPerBPOandChannel(workers, queues);
-
-    return queues;
-} 
-
-const countTasksPerBPOandChannel = (tasks, queues) => {
 
     const { TASK_BPO_SELECTOR } = process.env;
 
@@ -30,9 +22,13 @@ const countTasksPerBPOandChannel = (tasks, queues) => {
             
     });
 
+    return queues;
+
 }
 
-const countWorkersPerBPOandChannel = (workers, queues) => {
+const countWorkersPerBPOandChannel = (workers) => {
+
+    const queues = {};
 
     const { WORKER_BPO_SELECTOR } = process.env;
 
@@ -68,7 +64,7 @@ const countWorkersPerBPOandChannel = (workers, queues) => {
 
     });
 
-
+    return queues;
 }
 
 const increaseWorkerPerActivityAndChannel = (channels, activity_name, bpo, queues) => {
@@ -102,5 +98,6 @@ const increaseWorkerPerActivity = (activity_name, bpo, queues) => {
 }
 
 module.exports = {
-    aggregate
+    countTasksPerBPOandChannel,
+    countWorkersPerBPOandChannel
 }
